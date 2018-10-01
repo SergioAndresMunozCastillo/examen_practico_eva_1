@@ -1,0 +1,285 @@
+MySQL Shell 8.0.11
+
+Copyright (c) 2016, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+
+
+ MySQL  JS > \sql
+Switching to SQL mode Commands end with ;
+
+ MySQL  SQL > connect --mysql sergio@localhost
+           ;
+ERROR: Not connected.
+
+ MySQL  SQL > \connect --mysql sergio@localhost
+Creating a Classic session to 'sergio@localhost'
+Enter password:
+MySQL Error 1045 (28000): Access denied for user 'sergio'@'localhost' (using password: YES)
+
+ MySQL  SQL > ;
+ MySQL  SQL > \connect --mysql sergio@localhost
+Creating a Classic session to 'sergio@localhost'
+Enter password: ****
+Fetching schema names for autocompletion Press ^C to stop.
+Your MySQL connection id is 17
+Server version: 8.0.11 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+
+MySQL personal  SQL > create schema examen_eva_1;
+
+ MySQL personal  SQL > \use examen_eva_1
+
+ MySQL examen_eva_1  SQL > Create Table datos_tec(nombre varchar (50),
+                                             direccion varchar(100),
+                                             ciudad varchar(100),
+                                             pagina_web varchar(50),
+                                             telefono varchar (20));
+
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > create table carreras( clave_carreras int primary key auto_increment, nombre varchar(50) unique);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+ MySQL examen_eva_1  SQL > Create Table estudiantes( no_control int primary key auto_increment,
+						     nombre varchar(50),
+						     apellido_materno varchar(50),
+						     apellido_paterno varchar(50),
+						     direccion varchar (100),
+						     codigo_postal varchar(5), 
+						     carreras_clave_carreras int not null, 
+						     horas_servicio_social int default 0);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table materias(
+                                             clave_materias int primary key auto_increment,
+                                             nombre varchar(50) unique,
+                                             creditos int not null,
+                                             horas_teoricas int not null,
+                                             horas_practicas int not null,
+                                             carreras_clave_carreras int,
+                                             especialidad enum('SEGURIDAD INTEGRAL EN TECNOLOGIAS DE LA INFORMACION', 'SISTEMAS EMBEBIDOS', 'DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MOVILES',
+                                             'GESTION DE RECURSOS HUMANOS', 'ARQUITECTURA SUSTENTABLE', 'EDIFICACION', 'INNOVACION'));
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table empleados(
+                                             clave_empleados int primary key auto_increment,
+                                             nombre varchar(50),
+                                             apellido_materno varchar(50),
+                                             apellido_paterno varchar(50),
+                                             direccion varchar(100),
+                                             codigo_postal varchar(5),
+                                             telefono_casa varchar(20),
+                                             telefono_celular varchar(30),
+                                             departamento_clave_departamento int not null,
+                                             ocupacion varchar(50) not null);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table direcciones(
+                                             clave_direcciones int auto_increment,
+                                             nombre enum('DIRECCION', 'SUBDIRECCION ADMINISTRATIVA','SUBDIRECCION ACADEMICA', 'SUBDIRECCION DE PLANEACION') unique not null,
+                                             nombre_jefe varchar (50) not null);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table direcciones( clave_direcciones int primary key auto_increment,
+						     nombre enum('DIRECCION', 'SUBDIRECCION ADMINISTRATIVA','SUBDIRECCION ACADEMICA', 'SUBDIRECCION DE PLANEACION') unique not null,
+						     nombre_jefe varchar (50) not null);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table departamentos(
+                                             clave_departamento int primary key auto_increment,
+                                             nombre varchar(50) unique not null,
+                                             direcciones_clave_direcciones int not null,
+                                             nombre_jefe varchar(100) not null);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table horario_empleado(
+                                             clave_horario int primary key auto_increment,
+                                             inicio_horario time not null,
+                                             fin_horario time not null,
+                                             empleados_clave_empleados int not null,
+                                             fecha_inicio date not null,
+                                             fecha_fin date not null);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table actividades_complementarias(
+                                             clave_actividad int primary key auto_increment,
+                                             nombre varchar(40) not null,
+                                             descripcion varchar(400),
+                                             creditos int not null,
+                                             horas int not null,
+                                             evidencia enum('CERTIFICADO','CONSTANCIA','CONSTANCIA Y REPORTE', 'CONSTANCIA DE ASISTENCIA'));
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Create Table act_complementarias_estudiante(
+                                             clave int primary key auto_increment,
+                                             estudiantes_no_control int not null,
+                                             act_comp_clave_actividad int not null,
+                                             evaluacion varchar(15));
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table estudiantes ADD CONSTRAINT FOREIGN KEY(carreras_clave_carreras) 
+			                           REFERENCES carreras(clave_carreras) ON Delete restrict ON Update restrict;
+
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table materias ADD CONSTRAINT FOREIGN KEY(carreras_clave_carreras) 
+						REFERENCES carreras(clave_carreras) ON Delete cascade ON Update cascade;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table empleados ADD CONSTRAINT FOREIGN KEY(departamento_clave_departamento)
+						 REFERENCES departamentos(clave_departamento) ON Delete restrict ON Update restrict;
+
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table horario_empleado ADD CONSTRAINT FOREIGN KEY(empleados_clave_empleados) 
+							REFERENCES empleados(clave_empleados) ON Delete cascade ON Update restrict;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table departamentos  ADD CONSTRAINT FOREIGN KEY(direcciones_clave_direcciones) 
+						      REFERENCES direcciones(clave_direcciones) ON Delete cascade ON Update restrict;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table act_complementarias_estudiante  ADD CONSTRAINT FOREIGN KEY(act_comp_clave_actividad) REFERENCES actividades_complementarias(clave_actividad)
+                                             ON Update cascade;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Alter Table act_complementarias_estudiante  ADD CONSTRAINT FOREIGN KEY(estudiantes_no_control) 
+								       REFERENCES estudiantes(no_control) ON Delete cascade ON Update cascade;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+ MySQL examen_eva_1  SQL > create user 'secretaria'@'localhost' identified by 'secretariarismosecreto';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > GRANT SELECT ON examen_eva_1.* to 'secretaria'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL >  create user 'alumno'@'localhost' identified by 'alumnadoalienado';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > GRANT SELECT ON examen_eva_1.datos_tec to 'alumno'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > GRANT SELECT ON examen_eva_1.act_complementarias_estudiante to 'alumno'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > GRANT SELECT ON examen_eva_1.materias to 'alumno'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > GRANT SELECT ON examen_eva_1.carreras to 'alumno'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > drop table horario_estudiante;
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Arquitectura');
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria en Sistemas');
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+ MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria de Diseño industrial');
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria industrial');
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria informatica');
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL examen_eva_1  SQL > Insert into materias(nombre,creditos,horas_teoricas,horas_practicas,carreras_clave_carreras) values ('Fundamentos Teóricos del Diseño I',2,3,2,1);
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+ MySQL  examen_eva_1  SQL > show tables;
++--------------------------------+
+| Tables_in_examen_eva_1         |
++--------------------------------+
+| act_complementarias_estudiante |
+| actividades_complementarias    |
+| carreras                       |
+| datos_tec                      |
+| departamentos                  |
+| direcciones                    |
+| empleados                      |
+| estudiantes                    |
+| horario_empleado               |
+| materias                       |
++--------------------------------+
+
+ MySQL  examen_eva_1  SQL > desc act_complementarias_estudiante;
++--------------------------+-------------+------+-----+---------+----------------+
+| Field                    | Type        | Null | Key | Default | Extra          |
++--------------------------+-------------+------+-----+---------+----------------+
+| clave                    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| estudiantes_no_control   | int(11)     | NO   | MUL | NULL    |                |
+| act_comp_clave_actividad | int(11)     | NO   | MUL | NULL    |                |
+| evaluacion               | varchar(15) | YES  |     | NULL    |                |
++--------------------------+-------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc carreras;
++----------------+-------------+------+-----+---------+----------------+
+| Field          | Type        | Null | Key | Default | Extra          |
++----------------+-------------+------+-----+---------+----------------+
+| clave_carreras | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nombre         | varchar(50) | YES  | UNI | NULL    |                |
++----------------+-------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc datos_tec;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| nombre     | varchar(50)  | YES  |     | NULL    |       |
+| direccion  | varchar(100) | YES  |     | NULL    |       |
+| ciudad     | varchar(100) | YES  |     | NULL    |       |
+| pagina_web | varchar(50)  | YES  |     | NULL    |       |
+| telefono   | varchar(20)  | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+
+ MySQL  examen_eva_1  SQL > desc departamentos;
++-------------------------------+--------------+------+-----+---------+----------------+
+| Field                         | Type         | Null | Key | Default | Extra          |
++-------------------------------+--------------+------+-----+---------+----------------+
+| clave_departamento            | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nombre                        | varchar(50)  | NO   | UNI | NULL    |                |
+| direcciones_clave_direcciones | int(11)      | NO   | MUL | NULL    |                |
+| nombre_jefe                   | varchar(100) | NO   |     | NULL    |                |
++-------------------------------+--------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc direcciones;
++-------------------+-------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
+| Field             | Type                                                                                                  | Null | Key | Default | Extra          |
++-------------------+-------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
+| clave_direcciones | int(11)                                                                                               | NO   | PRI | NULL    | auto_increment |
+| nombre            | enum('DIRECCION','SUBDIRECCION ADMINISTRATIVA','SUBDIRECCION ACADEMICA','SUBDIRECCION DE PLANEACION') | NO   | UNI | NULL    |                |
+| nombre_jefe       | varchar(50)                                                                                           | NO   |     | NULL    |                |
++-------------------+-------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc empleados;
++---------------------------------+--------------+------+-----+---------+----------------+
+| Field                           | Type         | Null | Key | Default | Extra          |
++---------------------------------+--------------+------+-----+---------+----------------+
+| clave_empleados                 | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nombre                          | varchar(50)  | YES  |     | NULL    |                |
+| apellido_materno                | varchar(50)  | YES  |     | NULL    |                |
+| apellido_paterno                | varchar(50)  | YES  |     | NULL    |                |
+| direccion                       | varchar(100) | YES  |     | NULL    |                |
+| codigo_postal                   | varchar(5)   | YES  |     | NULL    |                |
+| telefono_casa                   | varchar(20)  | YES  |     | NULL    |                |
+| telefono_celular                | varchar(30)  | YES  |     | NULL    |                |
+| departamento_clave_departamento | int(11)      | NO   | MUL | NULL    |                |
+| ocupacion                       | varchar(50)  | NO   |     | NULL    |                |
++---------------------------------+--------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc estudiantes;
++-------------------------+--------------+------+-----+---------+----------------+
+| Field                   | Type         | Null | Key | Default | Extra          |
++-------------------------+--------------+------+-----+---------+----------------+
+| no_control              | int(11)      | NO   | PRI | NULL    | auto_increment |
+| nombre                  | varchar(50)  | YES  |     | NULL    |                |
+| apellido_materno        | varchar(50)  | YES  |     | NULL    |                |
+| apellido_paterno        | varchar(50)  | YES  |     | NULL    |                |
+| direccion               | varchar(100) | YES  |     | NULL    |                |
+| codigo_postal           | varchar(5)   | YES  |     | NULL    |                |
+| carreras_clave_carreras | int(11)      | NO   | MUL | NULL    |                |
+| horas_servicio_social   | int(11)      | YES  |     | 0       |                |
++-------------------------+--------------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc horario_empleado;
++---------------------------+---------+------+-----+---------+----------------+
+| Field                     | Type    | Null | Key | Default | Extra          |
++---------------------------+---------+------+-----+---------+----------------+
+| clave_horario             | int(11) | NO   | PRI | NULL    | auto_increment |
+| inicio_horario            | time    | NO   |     | NULL    |                |
+| fin_horario               | time    | NO   |     | NULL    |                |
+| empleados_clave_empleados | int(11) | NO   | MUL | NULL    |                |
+| fecha_inicio              | date    | NO   |     | NULL    |                |
+| fecha_fin                 | date    | NO   |     | NULL    |                |
++---------------------------+---------+------+-----+---------+----------------+
+
+ MySQL  examen_eva_1  SQL > desc materias;
++-------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
+| Field                   | Type                                                                                                                                                                                                                        | Null | Key | Default | Extra          |
++-------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
+| clave_materias          | int(11)                                                                                                                                                                                                                     | NO   | PRI | NULL    | auto_increment |
+| nombre                  | varchar(50)                                                                                                                                                                                                                 | YES  | UNI | NULL    |                |
+| creditos                | int(11)                                                                                                                                                                                                                     | NO   |     | NULL    |                |
+| horas_teoricas          | int(11)                                                                                                                                                                                                                     | NO   |     | NULL    |                |
+| horas_practicas         | int(11)                                                                                                                                                                                                                     | NO   |     | NULL    |                |
+| carreras_clave_carreras | int(11)                                                                                                                                                                                                                     | YES  | MUL | NULL    |                |
+| especialidad            | enum('SEGURIDAD INTEGRAL EN TECNOLOGIAS DE LA INFORMACION','SISTEMAS EMBEBIDOS','DESARROLLO DE APLICACIONES PARA DISPOSITIVOS MOVILES','GESTION DE RECURSOS HUMANOS','ARQUITECTURA SUSTENTABLE','EDIFICACION','INNOVACION') | YES  |     | NULL    |                |
++-------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+------+-----+---------+----------------+
