@@ -157,6 +157,12 @@ MySQL personal  SQL > create schema examen_eva_1;
  MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria en Sistemas');
 <--------------------------------------------------------------------------------------------------------------------------------------------------------->
 
+ MySQL examen_eva_1  SQL > create user 'director'@'localhost' identified by 'dirijotodoporquesoyeldirectorclaro';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+ MySQL examen_eva_1  SQL > GRANT SELECT, UPDATE, INSERT ON examen_eva_1.* to 'director'@'localhost';
+<--------------------------------------------------------------------------------------------------------------------------------------------------------->
+
  MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria de Diseño industrial');
 <--------------------------------------------------------------------------------------------------------------------------------------------------------->
  MySQL examen_eva_1  SQL > Insert into carreras( nombre) values('Ingenieria industrial');
